@@ -3,7 +3,7 @@ import WallImg from '@/assets/wall.png';
 import { MapTile, useMapStore } from '@/store/mapStore';
 
 const Map = () => {
-  const { map } = useMapStore();
+  const { gameMap: map } = useMapStore();
 
   return (
     <div className="grid gap-0">

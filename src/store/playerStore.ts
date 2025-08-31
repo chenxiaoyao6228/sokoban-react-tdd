@@ -1,33 +1,76 @@
 import { create } from 'zustand';
+import { useMapStore } from './mapStore';
+
+export interface PlayerPosition {
+  x: number;
+  y: number;
+}
 
 interface PlayerState {
-  position: {
-    x: number;
-    y: number;
-  };
+  position: PlayerPosition;
+  setPlayerPosition: (position: PlayerPosition) => void;
   movePlayerToLeft: () => void;
   movePlayerToRight: () => void;
   movePlayerToUp: () => void;
   movePlayerToDown: () => void;
 }
 
-export const usePlayerStore = create<PlayerState>((set) => ({
-  position: { x: 0, y: 0 },
-  movePlayerToLeft: () =>
-    set((state) => ({
-      position: { x: state.position.x - 1, y: state.position.y },
-    })),
-  movePlayerToRight: () =>
-    set((state) => ({
-      position: { x: state.position.x + 1, y: state.position.y },
-    })),
+export const usePlayerStore = create<PlayerState>((set, get) => ({
+  position: { x: 1, y: 1 },
+  setPlayerPosition: (position) => set({ position }),
+  movePlayerToLeft: () => {
+    const { isWall } = useMapStore.getState();
+    const { position } = get();
+    const targetPosition = { x: position.x - 1, y: position.y };
 
-  movePlayerToDown: () =>
-    set((state) => ({
-      position: { x: state.position.x, y: state.position.y + 1 },
-    })),
-  movePlayerToUp: () =>
-    set((state) => ({
-      position: { x: state.position.x, y: state.position.y - 1 },
-    })),
+    if (isWall(targetPosition)) {
+      return;
+    }
+
+    set(() => ({
+      position: targetPosition,
+    }));
+  },
+
+  movePlayerToRight: () => {
+    const { isWall } = useMapStore.getState();
+    const { position } = get();
+    const targetPosition = { x: position.x + 1, y: position.y };
+
+    if (isWall(targetPosition)) {
+      return;
+    }
+
+    set(() => ({
+      position: targetPosition,
+    }));
+  },
+
+  movePlayerToDown: () => {
+    const { isWall } = useMapStore.getState();
+    const { position } = get();
+    const targetPosition = { x: position.x, y: position.y + 1 };
+
+    if (isWall(targetPosition)) {
+      return;
+    }
+
+    set(() => ({
+      position: targetPosition,
+    }));
+  },
+
+  movePlayerToUp: () => {
+    const { isWall } = useMapStore.getState();
+    const { position } = get();
+    const targetPosition = { x: position.x, y: position.y - 1 };
+
+    if (isWall(targetPosition)) {
+      return;
+    }
+
+    set(() => ({
+      position: targetPosition,
+    }));
+  },
 }));
