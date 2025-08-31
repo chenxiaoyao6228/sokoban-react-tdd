@@ -1,9 +1,43 @@
 import PlayerImg from '@/assets/player.png';
 import { usePlayerStore } from '@/store/playerStore';
+import { useEffect } from 'react';
+
+const STEP_SIZE = 64;
+
+const useMove = () => {
+  const {
+    movePlayerToLeft,
+    movePlayerToRight,
+    movePlayerToDown,
+    movePlayerToUp,
+  } = usePlayerStore();
+  useEffect(() => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      switch (e.code) {
+        case 'ArrowLeft':
+          movePlayerToLeft();
+          break;
+        case 'ArrowRight':
+          movePlayerToRight();
+          break;
+        case 'ArrowUp':
+          movePlayerToUp();
+          break;
+        case 'ArrowDown':
+          movePlayerToDown();
+          break;
+      }
+    };
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [movePlayerToLeft, movePlayerToRight, movePlayerToUp, movePlayerToDown]);
+};
 
 const Player = () => {
+  useMove();
   const { position } = usePlayerStore();
-  const STEP_SIZE = 64;
 
   return (
     <div
