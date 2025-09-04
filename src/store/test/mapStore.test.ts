@@ -1,6 +1,10 @@
 import { MapTile, useMapStore } from '../mapStore';
 
 describe('mapStore', () => {
+  afterEach(() => {
+    useMapStore.getState().setGameMap([]);
+  });
+
   it('should be able to set map with new map', () => {
     const newMap = [
       [MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL],

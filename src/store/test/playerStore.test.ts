@@ -11,6 +11,10 @@ describe('PlayerStore', () => {
         [MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR],
       ]);
     });
+    afterEach(() => {
+      useCargoStore.getState().clearCargos();
+    });
+
     it('should be able to move player to left', () => {
       usePlayerStore.setState({ position: { x: 1, y: 1 } });
       const store = usePlayerStore.getState();
@@ -59,6 +63,7 @@ describe('PlayerStore', () => {
 
     afterEach(() => {
       useMapStore.getState().setGameMap([]);
+      useCargoStore.getState().clearCargos();
     });
 
     it('should not be able to move player to left if it is at the left edge', () => {
@@ -126,6 +131,8 @@ describe('PlayerStore', () => {
         [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
         [MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL],
       ]);
+    });
+    afterEach(() => {
       useCargoStore.getState().clearCargos();
     });
 

@@ -13,6 +13,7 @@ interface TargetState {
   createTarget: (position: Position) => Target;
   addTarget: (target: Target) => void;
   findTargetByPos: (position: Position) => Target | undefined;
+  clearTargets: () => void;
 }
 
 const useTargetStore = create<TargetState>((set, get) => ({
@@ -22,6 +23,7 @@ const useTargetStore = create<TargetState>((set, get) => ({
     set((state) => ({ targets: [...state.targets, target] })),
   findTargetByPos: (position) =>
     get().targets.find((t) => t.x === position.x && t.y === position.y),
+  clearTargets: () => set({ targets: [] }),
 }));
 
 export default useTargetStore;

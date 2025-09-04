@@ -6,7 +6,7 @@ export enum MapTile {
   WALL = 1,
 }
 
-type GameMap = MapTile[][];
+export type GameMap = MapTile[][];
 
 interface MapState {
   gameMap: GameMap;
@@ -18,13 +18,7 @@ interface MapAction {
 }
 
 const defaultState: MapState = {
-  gameMap: [
-    [MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL],
-    [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
-    [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
-    [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
-    [MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL],
-  ],
+  gameMap: [],
 };
 
 export const useMapStore = create<MapState & MapAction>((set, get) => ({

@@ -1,7 +1,24 @@
 import useCargoStore from '../cargoStore';
+import { MapTile, useMapStore } from '../mapStore';
 import useTargetStore from '../targetStore';
 
+const map = [
+  [MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL],
+  [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
+  [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
+  [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
+  [MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL],
+];
+
 describe('cargoStore', () => {
+  beforeEach(() => {
+    useMapStore.getState().setGameMap(map);
+  });
+
+  afterEach(() => {
+    useMapStore.getState().setGameMap([]);
+  });
+
   it('should create a cargo', () => {
     const { createCargo } = useCargoStore.getState();
     const cargo = createCargo({ x: 1, y: 1 });
