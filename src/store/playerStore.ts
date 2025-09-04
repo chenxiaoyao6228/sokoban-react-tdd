@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { useMapStore } from './mapStore';
+import useCargoStore from './cargoStore';
 
 export interface PlayerPosition {
   x: number;
@@ -9,6 +10,7 @@ export interface PlayerPosition {
 interface PlayerState {
   position: PlayerPosition;
   setPlayerPosition: (position: PlayerPosition) => void;
+  movePlayer: (dx: number, dy: number) => void;
   movePlayerToLeft: () => void;
   movePlayerToRight: () => void;
   movePlayerToUp: () => void;
@@ -18,59 +20,43 @@ interface PlayerState {
 export const usePlayerStore = create<PlayerState>((set, get) => ({
   position: { x: 1, y: 1 },
   setPlayerPosition: (position) => set({ position }),
-  movePlayerToLeft: () => {
+
+  movePlayer: (dx, dy) => {
     const { isWall } = useMapStore.getState();
     const { position } = get();
-    const targetPosition = { x: position.x - 1, y: position.y };
+    const targetPosition = { x: position.x + dx, y: position.y + dy };
 
     if (isWall(targetPosition)) {
       return;
     }
 
+    const cargo = useCargoStore.getState().findCargoByPos(targetPosition);
+
+    if (cargo) {
+      const isCargoMoved = useCargoStore.getState().moveCargo(cargo, dx, dy);
+      if (!isCargoMoved) {
+        return;
+      }
+    }
+
     set(() => ({
       position: targetPosition,
     }));
+  },
+
+  movePlayerToLeft: () => {
+    get().movePlayer(-1, 0);
   },
 
   movePlayerToRight: () => {
-    const { isWall } = useMapStore.getState();
-    const { position } = get();
-    const targetPosition = { x: position.x + 1, y: position.y };
-
-    if (isWall(targetPosition)) {
-      return;
-    }
-
-    set(() => ({
-      position: targetPosition,
-    }));
+    get().movePlayer(1, 0);
   },
 
   movePlayerToDown: () => {
-    const { isWall } = useMapStore.getState();
-    const { position } = get();
-    const targetPosition = { x: position.x, y: position.y + 1 };
-
-    if (isWall(targetPosition)) {
-      return;
-    }
-
-    set(() => ({
-      position: targetPosition,
-    }));
+    get().movePlayer(0, 1);
   },
 
   movePlayerToUp: () => {
-    const { isWall } = useMapStore.getState();
-    const { position } = get();
-    const targetPosition = { x: position.x, y: position.y - 1 };
-
-    if (isWall(targetPosition)) {
-      return;
-    }
-
-    set(() => ({
-      position: targetPosition,
-    }));
+    get().movePlayer(0, -1);
   },
 }));

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 const STEP_SIZE = 64;
 
-const useMove = () => {
+const usePlayerMove = () => {
   const {
     movePlayerToLeft,
     movePlayerToRight,
@@ -36,7 +36,8 @@ const useMove = () => {
 };
 
 const Player = () => {
-  useMove();
+  usePlayerMove();
+
   const { position } = usePlayerStore();
 
   return (
