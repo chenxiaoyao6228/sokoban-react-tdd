@@ -18,7 +18,7 @@ interface PlayerState {
 }
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
-  position: { x: 1, y: 1 },
+  position: { x: 0, y: 0 },
   setPlayerPosition: (position) => set({ position }),
 
   movePlayer: (dx, dy) => {

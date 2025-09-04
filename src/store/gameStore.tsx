@@ -12,36 +12,78 @@ interface LevelGameData {
   targets: { x: number; y: number }[];
 }
 
-interface GameStore {
-  isGameCompleted: boolean;
-  checkIfGameCompleted: () => void;
-  setUpGame: (gameData: LevelGameData) => void;
+export type GameData = LevelGameData[];
+
+interface GameState {
+  isGameLevelCompleted: boolean;
+  gameLevel: number; // Start from 0
+  gameData: GameData;
 }
 
-const useGameStore = create<GameStore>((set) => ({
-  isGameCompleted: false,
+interface GameAction {
+  checkIfGameCompleted: () => void;
+  setIsGameLevelCompleted: (isCompleted: boolean) => void;
+  setUpGame: (gameData: GameData) => void;
+  setLevelGameData: (gameData: GameData, level: number) => void;
+  toNextLevel: () => void;
+}
+
+const defaultGameStoreState = {
+  isGameLevelCompleted: false,
+  gameLevel: 0,
+  gameData: [],
+};
+
+const useGameStore = create<GameState & GameAction>((set, get) => ({
+  ...defaultGameStoreState,
   checkIfGameCompleted: () => {
     const { cargos } = useCargoStore.getState();
     const isCompleted = cargos.every((cargo) => cargo.onTarget);
-    set({ isGameCompleted: isCompleted });
+    set({ isGameLevelCompleted: isCompleted });
+  },
+  setIsGameLevelCompleted: (isCompleted: boolean) => {
+    set({ isGameLevelCompleted: isCompleted });
   },
   setUpGame: (gameData) => {
-    useMapStore.getState().setGameMap(gameData.gameMap);
+    set({ gameData });
+
+    get().setLevelGameData(gameData, 0);
+  },
+
+  setLevelGameData: (gameData: GameData, level: number) => {
+    const levelGameData = gameData[level];
+    useMapStore.getState().setGameMap(levelGameData.gameMap);
 
     // Set player position
-    usePlayerStore.getState().setPlayerPosition(gameData.player);
+    usePlayerStore.getState().setPlayerPosition(levelGameData.player);
 
     // Add cargos
-    gameData.cargos.forEach((cargoPos) => {
+    levelGameData.cargos.forEach((cargoPos) => {
       const cargo = useCargoStore.getState().createCargo(cargoPos);
       useCargoStore.getState().addCargo(cargo);
     });
 
     // Add targets
-    gameData.targets.forEach((targetPos) => {
+    levelGameData.targets.forEach((targetPos) => {
       const target = useTargetStore.getState().createTarget(targetPos);
       useTargetStore.getState().addTarget(target);
     });
+  },
+
+  toNextLevel: () => {
+    if (get().gameData.length === get().gameLevel + 1) return;
+    // clear state before going to next level
+    usePlayerStore.getState().setPlayerPosition({ x: 0, y: 0 });
+    useCargoStore.getState().clearCargos();
+    useMapStore.getState().clearGameMap();
+    useTargetStore.getState().clearTargets();
+
+    get().setLevelGameData(get().gameData, get().gameLevel + 1);
+
+    set((state) => ({
+      gameLevel: state.gameLevel + 1,
+      isGameLevelCompleted: false,
+    }));
   },
 }));
 

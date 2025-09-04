@@ -18,4 +18,17 @@ describe('mapStore', () => {
     const newState = useMapStore.getState();
     expect(newState.gameMap).toEqual(newMap);
   });
+
+  it('should clear game map', () => {
+    const newMap = [
+      [MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL, MapTile.WALL],
+      [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
+      [MapTile.WALL, MapTile.FLOOR, MapTile.FLOOR, MapTile.FLOOR, MapTile.WALL],
+      [MapTile.WALL, MapTile.WALL, MapTile.FLOOR, MapTile.WALL, MapTile.WALL],
+    ];
+    const store = useMapStore.getState();
+    store.setGameMap(newMap);
+    store.clearGameMap();
+    expect(store.gameMap).toEqual([]);
+  });
 });

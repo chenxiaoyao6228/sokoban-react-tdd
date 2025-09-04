@@ -15,6 +15,7 @@ interface MapState {
 interface MapAction {
   setGameMap: (map: number[][]) => void;
   isWall: (position: PlayerPosition) => boolean;
+  clearGameMap: () => void;
 }
 
 const defaultState: MapState = {
@@ -39,4 +40,5 @@ export const useMapStore = create<MapState & MapAction>((set, get) => ({
     return gameMap[position.y][position.x] === MapTile.WALL;
   },
   setGameMap: (map) => set({ gameMap: map }),
+  clearGameMap: () => set({ gameMap: [] }),
 }));

@@ -5,48 +5,42 @@ import Map from './Map';
 import Player from './Player';
 import Target from './Target';
 import useTargetStore from '../../store/targetStore';
-import { useMapStore } from '../../store/mapStore';
-import { usePlayerStore } from '../../store/playerStore';
-import { levelGameData } from '../../game/gameData';
+import useGameStore from '../../store/gameStore';
+import { gameData } from '../../game/gameData';
 
 const Game = () => {
-  const { cargos, createCargo, addCargo } = useCargoStore();
-  const { targets, addTarget, createTarget } = useTargetStore();
-  const { setGameMap } = useMapStore();
-  const { setPlayerPosition } = usePlayerStore();
+  const { isGameLevelCompleted, toNextLevel, setUpGame } = useGameStore();
+  const { cargos } = useCargoStore();
+  const { targets } = useTargetStore();
 
   useEffect(() => {
-    // Set map
-    setGameMap(levelGameData.gameMap);
-
-    // Set player position
-    setPlayerPosition(levelGameData.player);
-
-    // Add cargos
-    levelGameData.cargos.forEach((cargoPos) => {
-      const cargo = createCargo(cargoPos);
-      addCargo(cargo);
-    });
-
-    // Add targets
-    levelGameData.targets.forEach((targetPos) => {
-      const target = createTarget(targetPos);
-      addTarget(target);
-    });
+    setUpGame(gameData);
   }, []);
 
   return (
-    <div className="relative inline-flex">
-      <Map />
-      {targets.map((target) => (
-        <Target key={target.id} position={target} />
-      ))}
-      <Player />
+    <>
+      <div className="relative inline-flex">
+        <Map />
+        {targets.map((target) => (
+          <Target key={target.id} position={target} />
+        ))}
+        <Player />
 
-      {cargos.map((cargo) => (
-        <CargoComp cargo={cargo} />
-      ))}
-    </div>
+        {cargos.map((cargo) => (
+          <CargoComp key={cargo.id} cargo={cargo} />
+        ))}
+      </div>
+      {isGameLevelCompleted && (
+        <div className="">
+          <button
+            onClick={() => toNextLevel()}
+            className="px-6 py-3 mt-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-colors "
+          >
+            Next Level
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 
