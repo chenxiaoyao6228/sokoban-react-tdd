@@ -1,8 +1,14 @@
 import CargoImg from '@/assets/cargo.png';
-import { Position, usePosition } from '../../hooks/usePosition';
+import CargoOnTargetImg from '@/assets/cargo_on_target.png';
+import { usePosition } from '../../hooks/usePosition';
+import { Cargo } from '../../store/cargoStore';
 
-const Cargo = ({ position }: { position: Position }) => {
-  const { position: positionStyle } = usePosition(position);
+const CargoComp = ({ cargo }: { cargo: Cargo }) => {
+  const { position: positionStyle } = usePosition({
+    x: cargo.x,
+    y: cargo.y,
+  });
+
   return (
     <div
       className="w-16 h-16 absolute"
@@ -11,9 +17,13 @@ const Cargo = ({ position }: { position: Position }) => {
         top: positionStyle.y + 'px',
       }}
     >
-      <img src={CargoImg} alt="Cargo" className="w-full h-full object-cover" />
+      <img
+        src={cargo.onTarget ? CargoOnTargetImg : CargoImg}
+        alt="Cargo"
+        className="w-full h-full object-cover"
+      />
     </div>
   );
 };
 
-export default Cargo;
+export default CargoComp;

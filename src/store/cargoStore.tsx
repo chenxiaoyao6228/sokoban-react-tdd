@@ -2,11 +2,13 @@ import { create } from 'zustand';
 import { Position } from '../hooks/usePosition';
 import { uuid } from '../utils/uuid';
 import { useMapStore } from './mapStore';
+import useTargetStore from './targetStore';
 
-interface Cargo {
+export interface Cargo {
   id: string;
   x: number;
   y: number;
+  onTarget: boolean;
 }
 
 interface CargoState {
@@ -22,7 +24,7 @@ interface CargoState {
 
 const useCargoStore = create<CargoState>((set, get) => ({
   cargos: [],
-  createCargo: ({ x, y }) => ({ id: uuid(), x, y }),
+  createCargo: ({ x, y }) => ({ id: uuid(), x, y, onTarget: false }),
   moveCargo: (cargo, dx, dy) => {
     const { updateCargo } = get();
     const { isWall } = useMapStore.getState();
@@ -35,7 +37,17 @@ const useCargoStore = create<CargoState>((set, get) => ({
       if (get().findCargoByPos(targetPosition)) {
         return false;
       }
-      updateCargo(cargo.id, { ...cargo, x: cargo.x + dx, y: cargo.y + dy });
+      // check if there are any targets on the target position
+      const target = useTargetStore.getState().findTargetByPos(targetPosition);
+
+      console.log('target', !!target);
+
+      updateCargo(cargo.id, {
+        ...cargo,
+        x: cargo.x + dx,
+        y: cargo.y + dy,
+        onTarget: !!target,
+      });
       return true;
     }
     return false;
