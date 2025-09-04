@@ -1,6 +1,7 @@
 import PlayerImg from '@/assets/player.png';
 import { usePlayerStore } from '@/store/playerStore';
 import { useEffect } from 'react';
+import useGameStore from '../../store/gameStore';
 
 const STEP_SIZE = 64;
 
@@ -11,6 +12,9 @@ const usePlayerMove = () => {
     movePlayerToDown,
     movePlayerToUp,
   } = usePlayerStore();
+
+  const { checkIfGameCompleted } = useGameStore();
+
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       switch (e.code) {
@@ -27,12 +31,20 @@ const usePlayerMove = () => {
           movePlayerToDown();
           break;
       }
+
+      checkIfGameCompleted();
     };
     window.addEventListener('keyup', handleKeyUp);
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [movePlayerToLeft, movePlayerToRight, movePlayerToUp, movePlayerToDown]);
+  }, [
+    movePlayerToLeft,
+    movePlayerToRight,
+    movePlayerToUp,
+    movePlayerToDown,
+    checkIfGameCompleted,
+  ]);
 };
 
 const Player = () => {

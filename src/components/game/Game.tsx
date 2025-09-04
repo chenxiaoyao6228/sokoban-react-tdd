@@ -19,12 +19,13 @@ const Game = () => {
   }, []);
 
   return (
-    <div>
+    <div className="relative inline-flex">
       <Map />
       {targets.map((target) => (
         <Target key={target.id} position={target} />
       ))}
       <Player />
+
       {cargos.map((cargo) => (
         <CargoComp cargo={cargo} />
       ))}

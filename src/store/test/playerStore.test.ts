@@ -56,6 +56,11 @@ describe('PlayerStore', () => {
         [MapTile.WALL, MapTile.WALL, MapTile.FLOOR, MapTile.WALL],
       ]);
     });
+
+    afterEach(() => {
+      useMapStore.getState().setGameMap([]);
+    });
+
     it('should not be able to move player to left if it is at the left edge', () => {
       const { movePlayerToLeft, setPlayerPosition } = usePlayerStore.getState();
 
